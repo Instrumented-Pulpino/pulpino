@@ -19,6 +19,8 @@
 #
 
 # APB IPs
+apb/apb_monitor:
+  commit: master
 apb/apb_node:
   commit: master
 apb/apb_event_unit:
