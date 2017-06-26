@@ -100,7 +100,7 @@ module peripherals
   );
 
   localparam APB_ADDR_WIDTH  = 32;
-  localparam APB_NUM_SLAVES  = 8;
+  localparam APB_NUM_SLAVES  = 9;
 
   APB_BUS s_apb_bus();
 
