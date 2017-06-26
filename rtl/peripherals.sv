@@ -112,6 +112,7 @@ module peripherals
   APB_BUS s_i2c_bus();
   APB_BUS s_fll_bus();
   APB_BUS s_soc_ctrl_bus();
+  APB_BUS s_monitor_bus();
   APB_BUS s_debug_bus();
 
   logic [1:0]   s_spim_event;
@@ -228,6 +229,7 @@ module peripherals
      .i2c_master        ( s_i2c_bus        ),
      .fll_master        ( s_fll_bus        ),
      .soc_ctrl_master   ( s_soc_ctrl_bus   ),
+     .monitor_master    ( s_monitor_bus    ),
      .debug_master      ( s_debug_bus      )
   );
 
@@ -490,7 +492,28 @@ module peripherals
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
-  /// APB Slave 8: APB2PER for debug                             ///
+  /// APB Slave 8: Monitor                                       ///
+  ///                                                            ///
+  //////////////////////////////////////////////////////////////////
+
+    apb_monitor apb_monitor_i
+    (
+      .HCLK        ( clk_int[8]   ),
+      .HRESETn     ( rst_n        ),
+
+      .PADDR       ( s_monitor_bus.paddr      ),
+      .PWDATA      ( s_monitor_bus.pwdata     ),
+      .PWRITE      ( s_monitor_bus.pwrite     ),
+      .PSEL        ( s_monitor_bus.psel       ),
+      .PENABLE     ( s_monitor_bus.penable    ),
+      .PRDATA      ( s_monitor_bus.prdata     ),
+      .PREADY      ( s_monitor_bus.pready     ),
+      .PSLVERR     ( s_monitor_bus.pslverr    )
+      );
+
+  //////////////////////////////////////////////////////////////////
+  ///                                                            ///
+  /// APB Slave 9: APB2PER for debug                             ///
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
 
