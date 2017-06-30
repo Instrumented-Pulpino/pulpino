@@ -59,6 +59,8 @@ module pulpino(
   gpio_out,
   gpio_dir,
 
+  monitor_valid,
+
   tck_i,
   trstn_i,
   tms_i,
@@ -116,6 +118,8 @@ module pulpino(
   input  [31:0] gpio_in;
   output [31:0] gpio_out;
   output [31:0] gpio_dir;
+
+  output        monitor_valid;
 
   // JTAG signals
   input  tck_i;
@@ -182,6 +186,8 @@ module pulpino(
     .gpio_out          ( gpio_out          ),
     .gpio_dir          ( gpio_dir          ),
     .gpio_padcfg       (                   ),
+
+    .monitor_valid     ( monitor_valid     ),
 
     .tck_i             ( tck_i             ),
     .trstn_i           ( trstn_i           ),

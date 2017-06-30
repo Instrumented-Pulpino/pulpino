@@ -84,6 +84,9 @@ module pulpino_top
     input  logic              tdi_i,
     output logic              tdo_o,
 
+    // Monitor signal
+    output logic               monitor_valid,
+
     // PULPino specific pad config
     output logic [31:0] [5:0] pad_cfg_o,
     output logic       [31:0] pad_mux_o
@@ -259,6 +262,8 @@ module pulpino_top
     .gpio_out        ( gpio_out          ),
     .gpio_dir        ( gpio_dir          ),
     .gpio_padcfg     ( gpio_padcfg       ),
+
+    .monitor_valid   ( monitor_valid     ),
 
     .core_busy_i     ( core_busy_int     ),
     .irq_o           ( irq_to_core_int   ),

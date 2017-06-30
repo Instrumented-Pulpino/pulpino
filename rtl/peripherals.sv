@@ -86,6 +86,8 @@ module peripherals
     output logic              fetch_enable_o,
     output logic              clk_gate_core_o,
 
+    output logic              monitor_valid,
+
     output logic              fll1_req_o,
     output logic              fll1_wrn_o,
     output logic [1:0]        fll1_add_o,
@@ -498,17 +500,18 @@ module peripherals
 
     apb_monitor apb_monitor_i
     (
-      .HCLK        ( clk_int[8]   ),
-      .HRESETn     ( rst_n        ),
+      .HCLK          ( clk_int[8]   ),
+      .HRESETn       ( rst_n        ),
 
-      .PADDR       ( s_monitor_bus.paddr      ),
-      .PWDATA      ( s_monitor_bus.pwdata     ),
-      .PWRITE      ( s_monitor_bus.pwrite     ),
-      .PSEL        ( s_monitor_bus.psel       ),
-      .PENABLE     ( s_monitor_bus.penable    ),
-      .PRDATA      ( s_monitor_bus.prdata     ),
-      .PREADY      ( s_monitor_bus.pready     ),
-      .PSLVERR     ( s_monitor_bus.pslverr    )
+      .PADDR         ( s_monitor_bus.paddr      ),
+      .PWDATA        ( s_monitor_bus.pwdata     ),
+      .PWRITE        ( s_monitor_bus.pwrite     ),
+      .PSEL          ( s_monitor_bus.psel       ),
+      .PENABLE       ( s_monitor_bus.penable    ),
+      .PRDATA        ( s_monitor_bus.prdata     ),
+      .PREADY        ( s_monitor_bus.pready     ),
+      .PSLVERR       ( s_monitor_bus.pslverr    ),
+      .monitor_valid ( monitor_valid            )
       );
 
   //////////////////////////////////////////////////////////////////

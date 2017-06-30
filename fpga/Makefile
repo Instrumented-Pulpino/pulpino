@@ -1,4 +1,4 @@
-all: ips pulpino pulpemu sw
+all: ips pulpino pulpemu 
 
 
 
