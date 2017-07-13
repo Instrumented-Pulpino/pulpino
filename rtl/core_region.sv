@@ -35,7 +35,6 @@ module core_region
 
     AXI_BUS.Master      core_master,
     AXI_BUS.Master      dbg_master,
-    AXI_BUS.Slave       data_slave,
     AXI_BUS.Slave       instr_slave,
     DEBUG_BUS.Slave     debug,
 
@@ -68,18 +67,7 @@ module core_region
   logic [31:0]  core_lsu_rdata;
   logic [31:0]  core_lsu_wdata;
 
-  logic         core_data_req;
-  logic         core_data_gnt;
-  logic         core_data_rvalid;
-  logic [31:0]  core_data_addr;
-  logic         core_data_we;
-  logic [3:0]   core_data_be;
-  logic [31:0]  core_data_rdata;
-  logic [31:0]  core_data_wdata;
-
-
   // signals to/from AXI mem
-  logic                        is_axi_addr;
   logic                        axi_mem_req;
   logic [DATA_ADDR_WIDTH-1:0]  axi_mem_addr;
   logic                        axi_mem_we;
@@ -104,17 +92,6 @@ module core_region
   logic [AXI_DATA_WIDTH-1:0]   instr_mem_rdata;
   logic [AXI_DATA_WIDTH-1:0]   instr_mem_wdata;
 
-  // signals to/from data mem
-  logic                        data_mem_en;
-  logic [DATA_ADDR_WIDTH-1:0]  data_mem_addr;
-  logic                        data_mem_we;
-  logic [AXI_DATA_WIDTH/8-1:0] data_mem_be;
-  logic [AXI_DATA_WIDTH-1:0]   data_mem_rdata;
-  logic [AXI_DATA_WIDTH-1:0]   data_mem_wdata;
-
-
-
-  enum logic [0:0] { AXI, RAM } lsu_resp_CS, lsu_resp_NS;
 
   // signals to/from core2axi
   logic         core_axi_req;
@@ -243,51 +220,27 @@ module core_region
   //----------------------------------------------------------------------------//
   // DEMUX
   //----------------------------------------------------------------------------//
-  assign is_axi_addr     = (core_lsu_addr[31:20] != 12'h001);
-  assign core_data_req   = (~is_axi_addr) & core_lsu_req;
-  assign core_axi_req    =   is_axi_addr  & core_lsu_req;
-
-  assign core_data_addr  = core_lsu_addr;
-  assign core_data_we    = core_lsu_we;
-  assign core_data_be    = core_lsu_be;
-  assign core_data_wdata = core_lsu_wdata;
+  assign core_axi_req    = core_lsu_req;
 
   assign core_axi_addr   = core_lsu_addr;
   assign core_axi_we     = core_lsu_we;
   assign core_axi_be     = core_lsu_be;
   assign core_axi_wdata  = core_lsu_wdata;
 
-  always_ff @(posedge clk, negedge rst_n)
-  begin
-    if (rst_n == 1'b0)
-      lsu_resp_CS <= RAM;
-    else
-      lsu_resp_CS <= lsu_resp_NS;
-  end
-
   // figure out where the next response will be coming from
   always_comb
   begin
-    lsu_resp_NS = lsu_resp_CS;
     core_lsu_gnt = 1'b0;
 
     if (core_axi_req)
     begin
-      core_lsu_gnt = core_axi_gnt;
-      lsu_resp_NS = AXI;
-    end
-    else if (core_data_req)
-    begin
-      core_lsu_gnt = core_data_gnt;
-      lsu_resp_NS = RAM;
+      core_lsu_gnt = core_axi_gnt & !core_lsu_rvalid;
     end
   end
 
   // route response back to LSU
-  assign core_lsu_rdata  = (lsu_resp_CS == AXI) ? core_axi_rdata : core_data_rdata;
-  assign core_lsu_rvalid = core_axi_rvalid | core_data_rvalid;
-
-
+  assign core_lsu_rdata  = core_axi_rdata;
+  assign core_lsu_rvalid = core_axi_rvalid;
 
   //----------------------------------------------------------------------------//
   // Instruction RAM
@@ -372,91 +325,6 @@ module core_region
     .ram_be_o       ( instr_mem_be      ),
     .ram_rdata_i    ( instr_mem_rdata   ),
     .ram_wdata_o    ( instr_mem_wdata   )
-  );
-
-
-  //----------------------------------------------------------------------------//
-  // Data RAM
-  //----------------------------------------------------------------------------//
-  sp_ram_wrap
-  #(
-    .RAM_SIZE   ( DATA_RAM_SIZE  ),
-    .DATA_WIDTH ( AXI_DATA_WIDTH )
-  )
-  data_mem
-  (
-    .clk          ( clk            ),
-    .rstn_i       ( rst_n          ),
-    .en_i         ( data_mem_en    ),
-    .addr_i       ( data_mem_addr  ),
-    .wdata_i      ( data_mem_wdata ),
-    .rdata_o      ( data_mem_rdata ),
-    .we_i         ( data_mem_we    ),
-    .be_i         ( data_mem_be    ),
-    .bypass_en_i  ( testmode_i     )
-  );
-
-  axi_mem_if_SP_wrap
-  #(
-    .AXI_ADDR_WIDTH  ( AXI_ADDR_WIDTH     ),
-    .AXI_DATA_WIDTH  ( AXI_DATA_WIDTH     ),
-    .AXI_ID_WIDTH    ( AXI_ID_SLAVE_WIDTH ),
-    .AXI_USER_WIDTH  ( AXI_USER_WIDTH     ),
-    .MEM_ADDR_WIDTH  ( DATA_ADDR_WIDTH    )
-  )
-  data_mem_axi_if
-  (
-    .clk         ( clk               ),
-    .rst_n       ( rst_n             ),
-    .test_en_i   ( testmode_i        ),
-
-    .mem_req_o   ( axi_mem_req       ),
-    .mem_addr_o  ( axi_mem_addr      ),
-    .mem_we_o    ( axi_mem_we        ),
-    .mem_be_o    ( axi_mem_be        ),
-    .mem_rdata_i ( axi_mem_rdata     ),
-    .mem_wdata_o ( axi_mem_wdata     ),
-
-    .slave       ( data_slave        )
-  );
-
-
-  ram_mux
-  #(
-    .ADDR_WIDTH ( DATA_ADDR_WIDTH ),
-    .IN0_WIDTH  ( AXI_DATA_WIDTH  ),
-    .IN1_WIDTH  ( 32              ),
-    .OUT_WIDTH  ( AXI_DATA_WIDTH  )
-  )
-  data_ram_mux_i
-  (
-    .clk            ( clk              ),
-    .rst_n          ( rst_n            ),
-
-    .port0_req_i    ( axi_mem_req      ),
-    .port0_gnt_o    (                  ),
-    .port0_rvalid_o (                  ),
-    .port0_addr_i   ( {axi_mem_addr[DATA_ADDR_WIDTH-AXI_B_WIDTH-1:0], {AXI_B_WIDTH{1'b0}}} ),
-    .port0_we_i     ( axi_mem_we       ),
-    .port0_be_i     ( axi_mem_be       ),
-    .port0_rdata_o  ( axi_mem_rdata    ),
-    .port0_wdata_i  ( axi_mem_wdata    ),
-
-    .port1_req_i    ( core_data_req    ),
-    .port1_gnt_o    ( core_data_gnt    ),
-    .port1_rvalid_o ( core_data_rvalid ),
-    .port1_addr_i   ( core_data_addr[DATA_ADDR_WIDTH-1:0] ),
-    .port1_we_i     ( core_data_we     ),
-    .port1_be_i     ( core_data_be     ),
-    .port1_rdata_o  ( core_data_rdata  ),
-    .port1_wdata_i  ( core_data_wdata  ),
-
-    .ram_en_o       ( data_mem_en      ),
-    .ram_addr_o     ( data_mem_addr    ),
-    .ram_we_o       ( data_mem_we      ),
-    .ram_be_o       ( data_mem_be      ),
-    .ram_rdata_i    ( data_mem_rdata   ),
-    .ram_wdata_o    ( data_mem_wdata   )
   );
 
 
