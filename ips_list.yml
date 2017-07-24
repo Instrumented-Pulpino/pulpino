@@ -21,6 +21,7 @@
 # APB IPs
 apb/apb_monitor:
   commit: master
+  group: Instrumented-Pulpino
 apb/apb_node:
   commit: master
 apb/apb_event_unit:

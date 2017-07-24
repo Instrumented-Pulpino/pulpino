@@ -1,8 +1,6 @@
 #!/bin/tcsh
 
-setenv PATH /usr/scratch2/larain/haugoug/artefacts/riscv_gcc/2.2.26/bin/:$PATH
-
-./update-ips.py || exit 1
+./update-ips.py git@github.com || exit 1
 
 set OBJDUMP=`which riscv32-unknown-elf-objdump`
 set OBJCOPY=`which riscv32-unknown-elf-objcopy`
