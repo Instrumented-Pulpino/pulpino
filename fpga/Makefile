@@ -1,4 +1,4 @@
-all: ips pulpino pulpemu 
+all: ips pulpino timapulpemu 
 
 
 
@@ -40,6 +40,12 @@ pulpemu: pulpemu/pulpemu_top.bit
 
 pulpemu/pulpemu_top.bit:
 	make -C pulpemu clean all
+
+.PHONY: timapulpemu
+timapulpemu: timapulpemu/pulpemu_top.bit
+
+timapulpemu/pulpemu_top.bit:
+	make -C timapulpemu clean all
 
 
 .PHONY: sw
