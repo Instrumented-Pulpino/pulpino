@@ -166,7 +166,7 @@ proc create_root_design { parentCell } {
 
   # Create instance: processing_system7_0, and set properties
   set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0 ]
-  set_property -dict [ list CONFIG.PCW_ENET0_PERIPHERAL_ENABLE {0} CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1} CONFIG.PCW_SD0_PERIPHERAL_ENABLE {0} CONFIG.PCW_SPI0_PERIPHERAL_ENABLE {1} CONFIG.PCW_UART0_PERIPHERAL_ENABLE {0} CONFIG.PCW_UART1_PERIPHERAL_ENABLE {1} CONFIG.PCW_UART1_UART1_IO {EMIO} CONFIG.PCW_USB0_PERIPHERAL_ENABLE {0} CONFIG.preset {ZedBoard}  ] $processing_system7_0
+  set_property -dict [ list CONFIG.PCW_CRYSTAL_PERIPHERAL_FREQMHZ {50} CONFIG.PCW_ENET0_PERIPHERAL_ENABLE {0} CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1} CONFIG.PCW_SD0_PERIPHERAL_ENABLE {0} CONFIG.PCW_SPI0_PERIPHERAL_ENABLE {1} CONFIG.PCW_UART0_PERIPHERAL_ENABLE {0} CONFIG.PCW_UART1_PERIPHERAL_ENABLE {1} CONFIG.PCW_UART1_UART1_IO {EMIO} CONFIG.PCW_USB0_PERIPHERAL_ENABLE {0} CONFIG.preset {ZedBoard}  ] $processing_system7_0
 
   # Create instance: processing_system7_0_axi_periph, and set properties
   set processing_system7_0_axi_periph [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 processing_system7_0_axi_periph ]
@@ -215,4 +215,6 @@ proc create_root_design { parentCell } {
 
 create_root_design ""
 
+
+puts "\n\nWARNING: This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
 

@@ -59,6 +59,9 @@ architecture rtl of timapulpemu_top is
       spi_cs_i          : in  std_logic;
       spi_sdo0_o        : out std_logic;
       spi_sdi0_i        : in  std_logic;
+      spi_sdi1_i        : in  std_logic;
+      spi_sdi2_i        : in  std_logic;
+      spi_sdi3_i        : in  std_logic;
       spi_master_clk_o  : out std_logic;
       spi_master_sdi0_i : in  std_logic;
       spi_master_sdi1_i : in  std_logic;
@@ -127,10 +130,6 @@ architecture rtl of timapulpemu_top is
   signal spi_cs          : std_logic;
   signal spi_miso        : std_logic;
   signal spi_mosi        : std_logic;
-  signal spi_master_sdi0 : std_logic;
-  signal spi_master_sdi1 : std_logic;
-  signal spi_master_sdi2 : std_logic;
-  signal spi_master_sdi3 : std_logic;
   signal monitor_valid   : std_logic;
   signal gpio_in_ps7     : std_logic_vector(31 downto 0);
   signal gpio_in         : std_logic_vector(31 downto 0);
@@ -147,12 +146,6 @@ begin  -- architecture rtl
 
   -- fetch enable
   fetch_enable <= '1';
-
-  -- SPI Master
-  spi_master_sdi0 <= '0';
-  spi_master_sdi1 <= '0';
-  spi_master_sdi2 <= '0';
-  spi_master_sdi3 <= '0';
 
   -- UART
   uart_cts <= '0';
@@ -193,10 +186,13 @@ begin  -- architecture rtl
       spi_cs_i          => spi_cs,
       spi_sdo0_o        => spi_miso,
       spi_sdi0_i        => spi_mosi,
-      spi_master_sdi0_i => spi_master_sdi0,
-      spi_master_sdi1_i => spi_master_sdi1,
-      spi_master_sdi2_i => spi_master_sdi2,
-      spi_master_sdi3_i => spi_master_sdi3,
+      spi_sdi1_i        => constant0,
+      spi_sdi2_i        => constant0,
+      spi_sdi3_i        => constant0,
+      spi_master_sdi0_i => constant0,
+      spi_master_sdi1_i => constant0,
+      spi_master_sdi2_i => constant0,
+      spi_master_sdi3_i => constant0,
       monitor_valid     => monitor_valid,
       gpio_in           => gpio_in,
       gpio_out          => gpio_out,

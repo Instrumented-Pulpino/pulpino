@@ -103,10 +103,10 @@ devtree: sd_image/devicetree.dtb
 # fsbl
 ################################################################################
 
-hsi/pulpemu_top.sysdef: ../pulpemu/pulpemu.runs/impl_1/pulpemu_top.sysdef
+hsi/timapulpemu_top.sysdef: ../timapulpemu/timapulpemu.runs/impl_1/timapulpemu_top.sysdef
 	cp $< $@
 
-hsi/fsbl/executable.elf: hsi/pulpemu_top.sysdef
+hsi/fsbl/executable.elf: hsi/timapulpemu_top.sysdef
 	cd hsi && hsi -mode tcl -source ./fsbl.tcl
 
 sd_image/fsbl.elf: hsi/fsbl/executable.elf
@@ -119,14 +119,14 @@ fsbl: sd_image/fsbl.elf
 # get bitstream
 ################################################################################
 
-sd_image/pulpemu_top.bit: ../pulpemu/pulpemu.runs/impl_1/pulpemu_top.bit
+sd_image/timapulpemu_top.bit: ../timapulpemu/timapulpemu.runs/impl_1/timapulpemu_top.bit
 	cp $< $@
 
 ################################################################################
 # boot.bin
 ################################################################################
 
-sd_image/BOOT.BIN: sd_image/u-boot.elf sd_image/pulpemu_top.bit boot.bif sd_image/fsbl.elf
+sd_image/BOOT.BIN: sd_image/u-boot.elf sd_image/timapulpemu_top.bit boot.bif sd_image/fsbl.elf
 	bootgen -image ./boot.bif -o i ./sd_image/BOOT.BIN -w on
 
 .PHONY: clean
@@ -136,5 +136,5 @@ clean:
 	rm -f linux-xlnx/.config
 	rm -f buildroot/.config
 	make -C buildroot clean
-	rm -f hsi/pulpemu_top.sysdef
+	rm -f hsi/timapulpemu_top.sysdef
 	rm -f sd_image/*
