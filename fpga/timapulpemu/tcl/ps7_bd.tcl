@@ -29,7 +29,8 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # If you do not already have a project created,
 # you can create a project using the following command:
-#    create_project project_1 myproj -part xc7z010clg400-1
+#    create_project project_1 myproj -part xc7z020clg484-1
+#    set_property BOARD_PART em.avnet.com:zed:part0:0.9 [current_project]
 
 # CHECKING IF PROJECT EXISTS
 if { [get_projects -quiet] eq "" } {
@@ -146,8 +147,6 @@ proc create_root_design { parentCell } {
   set DDR [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:ddrx_rtl:1.0 DDR ]
   set FIXED_IO [ create_bd_intf_port -mode Master -vlnv xilinx.com:display_processing_system7:fixedio_rtl:1.0 FIXED_IO ]
   set UART_0 [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:uart_rtl:1.0 UART_0 ]
-  set clking_axi [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:aximm_rtl:1.0 clking_axi ]
-  set_property -dict [ list CONFIG.ADDR_WIDTH {32} CONFIG.DATA_WIDTH {32} CONFIG.FREQ_HZ {50000000} CONFIG.PROTOCOL {AXI4LITE}  ] $clking_axi
 
   # Create ports
   set SPI0_MISO_I [ create_bd_port -dir I SPI0_MISO_I ]
@@ -157,96 +156,49 @@ proc create_root_design { parentCell } {
   set SPI0_SCLK_O [ create_bd_port -dir O SPI0_SCLK_O ]
   set SPI0_SS_I [ create_bd_port -dir I SPI0_SS_I ]
   set SPI0_SS_O [ create_bd_port -dir O SPI0_SS_O ]
-  set fetch_enable [ create_bd_port -dir O -from 31 -to 0 fetch_enable ]
   set gpio_io_i [ create_bd_port -dir I -from 31 -to 0 gpio_io_i ]
   set gpio_io_o [ create_bd_port -dir O -from 31 -to 0 gpio_io_o ]
-  set jtag_emu_i [ create_bd_port -dir I -from 31 -to 0 jtag_emu_i ]
-  set jtag_emu_o [ create_bd_port -dir O -from 31 -to 0 jtag_emu_o ]
   set ps7_clk [ create_bd_port -dir O ps7_clk ]
   set ps7_rst_n [ create_bd_port -dir O ps7_rst_n ]
 
-  # Create instance: axi_crossbar_0, and set properties
-  set axi_crossbar_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_crossbar:2.1 axi_crossbar_0 ]
-  set_property -dict [ list CONFIG.CONNECTIVITY_MODE {SASD} CONFIG.DATA_WIDTH {32} CONFIG.NUM_MI {4} CONFIG.R_REGISTER {0} CONFIG.S01_BASE_ID {0x00001000} CONFIG.S02_BASE_ID {0x00002000} CONFIG.S03_BASE_ID {0x00003000} CONFIG.S04_BASE_ID {0x00004000} CONFIG.S05_BASE_ID {0x00005000} CONFIG.S06_BASE_ID {0x00006000} CONFIG.S07_BASE_ID {0x00007000} CONFIG.S08_BASE_ID {0x00008000} CONFIG.S09_BASE_ID {0x00009000} CONFIG.S10_BASE_ID {0x0000a000} CONFIG.S11_BASE_ID {0x0000b000} CONFIG.S12_BASE_ID {0x0000c000} CONFIG.S13_BASE_ID {0x0000d000} CONFIG.S14_BASE_ID {0x0000e000} CONFIG.S15_BASE_ID {0x0000f000} CONFIG.STRATEGY {1}  ] $axi_crossbar_0
-
-  # Create instance: axi_gpio_emu, and set properties
-  set axi_gpio_emu [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_emu ]
-
-  # Create instance: axi_jtag_emu, and set properties
-  set axi_jtag_emu [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_jtag_emu ]
-
-  # Create instance: axi_protocol_converter_0, and set properties
-  set axi_protocol_converter_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_protocol_converter:2.1 axi_protocol_converter_0 ]
-  set_property -dict [ list CONFIG.TRANSLATION_MODE {0}  ] $axi_protocol_converter_0
-
-  # Create instance: axi_protocol_converter_1, and set properties
-  set axi_protocol_converter_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_protocol_converter:2.1 axi_protocol_converter_1 ]
-  set_property -dict [ list CONFIG.MI_PROTOCOL {AXI4} CONFIG.SI_PROTOCOL {AXI3}  ] $axi_protocol_converter_1
-
-  # Create instance: axi_protocol_converter_2, and set properties
-  set axi_protocol_converter_2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_protocol_converter:2.1 axi_protocol_converter_2 ]
-
-  # Create instance: axi_protocol_converter_3, and set properties
-  set axi_protocol_converter_3 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_protocol_converter:2.1 axi_protocol_converter_3 ]
-  set_property -dict [ list CONFIG.TRANSLATION_MODE {0}  ] $axi_protocol_converter_3
-
-  # Create instance: axi_protocol_converter_4, and set properties
-  set axi_protocol_converter_4 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_protocol_converter:2.1 axi_protocol_converter_4 ]
-  set_property -dict [ list CONFIG.TRANSLATION_MODE {0}  ] $axi_protocol_converter_4
-
-  # Create instance: axi_pulp_control, and set properties
-  set axi_pulp_control [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_pulp_control ]
-  set_property -dict [ list CONFIG.C_ALL_INPUTS {0} CONFIG.C_ALL_OUTPUTS {1} CONFIG.C_IS_DUAL {0}  ] $axi_pulp_control
+  # Create instance: axi_gpio_0, and set properties
+  set axi_gpio_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_0 ]
 
   # Create instance: processing_system7_0, and set properties
   set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0 ]
+  set_property -dict [ list CONFIG.PCW_ENET0_PERIPHERAL_ENABLE {0} CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1} CONFIG.PCW_SD0_PERIPHERAL_ENABLE {0} CONFIG.PCW_SPI0_PERIPHERAL_ENABLE {1} CONFIG.PCW_UART0_PERIPHERAL_ENABLE {0} CONFIG.PCW_UART1_PERIPHERAL_ENABLE {1} CONFIG.PCW_UART1_UART1_IO {EMIO} CONFIG.PCW_USB0_PERIPHERAL_ENABLE {0} CONFIG.preset {ZedBoard}  ] $processing_system7_0
 
-  if {[string equal $::env(BOARD) "zybo"]} {
-      set_property -dict [ list CONFIG.PCW_CRYSTAL_PERIPHERAL_FREQMHZ {50} CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {50} CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1} CONFIG.PCW_SD0_GRP_WP_IO {EMIO} CONFIG.PCW_SPI0_PERIPHERAL_ENABLE {1} CONFIG.PCW_S_AXI_HP0_DATA_WIDTH {64} CONFIG.PCW_UART0_PERIPHERAL_ENABLE {1} CONFIG.PCW_UIPARAM_DDR_FREQ_MHZ {525} CONFIG.PCW_UIPARAM_DDR_PARTNO {MT41K128M16 JT-125} CONFIG.PCW_USE_S_AXI_HP0 {0} CONFIG.preset {ZedBoard}  ] $processing_system7_0
-  } else {
-      set_property -dict [ list CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {50} CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1} CONFIG.PCW_SPI0_PERIPHERAL_ENABLE {1} CONFIG.PCW_S_AXI_HP0_DATA_WIDTH {64} CONFIG.PCW_UART0_PERIPHERAL_ENABLE {1} CONFIG.PCW_USE_S_AXI_HP0 {0} CONFIG.preset {ZedBoard}  ] $processing_system7_0
-  }
-  # Create instance: xlconstant_0, and set properties
-  set xlconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0 ]
-  set_property -dict [ list CONFIG.CONST_VAL {0}  ] $xlconstant_0
+  # Create instance: processing_system7_0_axi_periph, and set properties
+  set processing_system7_0_axi_periph [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 processing_system7_0_axi_periph ]
+  set_property -dict [ list CONFIG.NUM_MI {1}  ] $processing_system7_0_axi_periph
+
+  # Create instance: rst_processing_system7_0_100M, and set properties
+  set rst_processing_system7_0_100M [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_processing_system7_0_100M ]
 
   # Create interface connections
-  connect_bd_intf_net -intf_net axi_crossbar_0_M00_AXI [get_bd_intf_pins axi_crossbar_0/M00_AXI] [get_bd_intf_pins axi_protocol_converter_0/S_AXI]
-  connect_bd_intf_net -intf_net axi_crossbar_0_M01_AXI [get_bd_intf_pins axi_crossbar_0/M01_AXI] [get_bd_intf_pins axi_protocol_converter_2/S_AXI]
-  connect_bd_intf_net -intf_net axi_crossbar_0_M02_AXI [get_bd_intf_pins axi_crossbar_0/M02_AXI] [get_bd_intf_pins axi_protocol_converter_3/S_AXI]
-  connect_bd_intf_net -intf_net axi_crossbar_0_M03_AXI [get_bd_intf_pins axi_crossbar_0/M03_AXI] [get_bd_intf_pins axi_protocol_converter_4/S_AXI]
-  connect_bd_intf_net -intf_net axi_protocol_converter_0_M_AXI [get_bd_intf_pins axi_protocol_converter_0/M_AXI] [get_bd_intf_pins axi_pulp_control/S_AXI]
-  connect_bd_intf_net -intf_net axi_protocol_converter_1_M_AXI [get_bd_intf_pins axi_crossbar_0/S00_AXI] [get_bd_intf_pins axi_protocol_converter_1/M_AXI]
-  connect_bd_intf_net -intf_net axi_protocol_converter_2_M_AXI [get_bd_intf_ports clking_axi] [get_bd_intf_pins axi_protocol_converter_2/M_AXI]
-  connect_bd_intf_net -intf_net axi_protocol_converter_3_M_AXI [get_bd_intf_pins axi_jtag_emu/S_AXI] [get_bd_intf_pins axi_protocol_converter_3/M_AXI]
-  connect_bd_intf_net -intf_net axi_protocol_converter_4_M_AXI [get_bd_intf_pins axi_gpio_emu/S_AXI] [get_bd_intf_pins axi_protocol_converter_4/M_AXI]
   connect_bd_intf_net -intf_net processing_system7_0_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins processing_system7_0/DDR]
   connect_bd_intf_net -intf_net processing_system7_0_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_system7_0/FIXED_IO]
-  connect_bd_intf_net -intf_net processing_system7_0_M_AXI_GP0 [get_bd_intf_pins axi_protocol_converter_1/S_AXI] [get_bd_intf_pins processing_system7_0/M_AXI_GP0]
-  connect_bd_intf_net -intf_net processing_system7_0_UART_0 [get_bd_intf_ports UART_0] [get_bd_intf_pins processing_system7_0/UART_0]
+  connect_bd_intf_net -intf_net processing_system7_0_M_AXI_GP0 [get_bd_intf_pins processing_system7_0/M_AXI_GP0] [get_bd_intf_pins processing_system7_0_axi_periph/S00_AXI]
+  connect_bd_intf_net -intf_net processing_system7_0_UART_1 [get_bd_intf_ports UART_0] [get_bd_intf_pins processing_system7_0/UART_1]
+  connect_bd_intf_net -intf_net processing_system7_0_axi_periph_M00_AXI [get_bd_intf_pins axi_gpio_0/S_AXI] [get_bd_intf_pins processing_system7_0_axi_periph/M00_AXI]
 
   # Create port connections
   connect_bd_net -net SPI0_MISO_I_1 [get_bd_ports SPI0_MISO_I] [get_bd_pins processing_system7_0/SPI0_MISO_I]
   connect_bd_net -net SPI0_MOSI_I_1 [get_bd_ports SPI0_MOSI_I] [get_bd_pins processing_system7_0/SPI0_MOSI_I]
   connect_bd_net -net SPI0_SCLK_I_1 [get_bd_ports SPI0_SCLK_I] [get_bd_pins processing_system7_0/SPI0_SCLK_I]
   connect_bd_net -net SPI0_SS_I_1 [get_bd_ports SPI0_SS_I] [get_bd_pins processing_system7_0/SPI0_SS_I]
-  connect_bd_net -net axi_gpio_emu_gpio_io_o [get_bd_ports gpio_io_o] [get_bd_pins axi_gpio_emu/gpio_io_o]
-  connect_bd_net -net axi_jtag_emu_gpio_io_o [get_bd_ports jtag_emu_o] [get_bd_pins axi_jtag_emu/gpio_io_o]
-  connect_bd_net -net axi_pulp_control_gpio_io_o [get_bd_ports fetch_enable] [get_bd_pins axi_pulp_control/gpio_io_o]
-  connect_bd_net -net gpio_io_i_1 [get_bd_ports jtag_emu_i] [get_bd_pins axi_jtag_emu/gpio_io_i]
-  connect_bd_net -net gpio_io_i_2 [get_bd_ports gpio_io_i] [get_bd_pins axi_gpio_emu/gpio_io_i]
-  connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_ports ps7_clk] [get_bd_pins axi_crossbar_0/aclk] [get_bd_pins axi_gpio_emu/s_axi_aclk] [get_bd_pins axi_jtag_emu/s_axi_aclk] [get_bd_pins axi_protocol_converter_0/aclk] [get_bd_pins axi_protocol_converter_1/aclk] [get_bd_pins axi_protocol_converter_2/aclk] [get_bd_pins axi_protocol_converter_3/aclk] [get_bd_pins axi_protocol_converter_4/aclk] [get_bd_pins axi_pulp_control/s_axi_aclk] [get_bd_pins processing_system7_0/FCLK_CLK0] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK]
-  connect_bd_net -net processing_system7_0_FCLK_RESET0_N [get_bd_ports ps7_rst_n] [get_bd_pins axi_crossbar_0/aresetn] [get_bd_pins axi_gpio_emu/s_axi_aresetn] [get_bd_pins axi_jtag_emu/s_axi_aresetn] [get_bd_pins axi_protocol_converter_0/aresetn] [get_bd_pins axi_protocol_converter_1/aresetn] [get_bd_pins axi_protocol_converter_2/aresetn] [get_bd_pins axi_protocol_converter_3/aresetn] [get_bd_pins axi_protocol_converter_4/aresetn] [get_bd_pins axi_pulp_control/s_axi_aresetn] [get_bd_pins processing_system7_0/FCLK_RESET0_N]
+  connect_bd_net -net axi_gpio_0_gpio_io_o [get_bd_ports gpio_io_o] [get_bd_pins axi_gpio_0/gpio_io_o]
+  connect_bd_net -net gpio_io_i_1 [get_bd_ports gpio_io_i] [get_bd_pins axi_gpio_0/gpio_io_i]
+  connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_ports ps7_clk] [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins processing_system7_0/FCLK_CLK0] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins processing_system7_0_axi_periph/ACLK] [get_bd_pins processing_system7_0_axi_periph/M00_ACLK] [get_bd_pins processing_system7_0_axi_periph/S00_ACLK] [get_bd_pins rst_processing_system7_0_100M/slowest_sync_clk]
+  connect_bd_net -net processing_system7_0_FCLK_RESET0_N [get_bd_ports ps7_rst_n] [get_bd_pins processing_system7_0/FCLK_RESET0_N] [get_bd_pins rst_processing_system7_0_100M/ext_reset_in]
   connect_bd_net -net processing_system7_0_SPI0_MOSI_O [get_bd_ports SPI0_MOSI_O] [get_bd_pins processing_system7_0/SPI0_MOSI_O]
   connect_bd_net -net processing_system7_0_SPI0_SCLK_O [get_bd_ports SPI0_SCLK_O] [get_bd_pins processing_system7_0/SPI0_SCLK_O]
   connect_bd_net -net processing_system7_0_SPI0_SS_O [get_bd_ports SPI0_SS_O] [get_bd_pins processing_system7_0/SPI0_SS_O]
-  connect_bd_net -net xlconstant_0_dout [get_bd_pins processing_system7_0/SDIO0_WP] [get_bd_pins xlconstant_0/dout]
+  connect_bd_net -net rst_processing_system7_0_100M_interconnect_aresetn [get_bd_pins processing_system7_0_axi_periph/ARESETN] [get_bd_pins rst_processing_system7_0_100M/interconnect_aresetn]
+  connect_bd_net -net rst_processing_system7_0_100M_peripheral_aresetn [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins processing_system7_0_axi_periph/M00_ARESETN] [get_bd_pins processing_system7_0_axi_periph/S00_ARESETN] [get_bd_pins rst_processing_system7_0_100M/peripheral_aresetn]
 
   # Create address segments
-  create_bd_addr_seg -range 0x10000 -offset 0x51030000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_gpio_emu/S_AXI/Reg] SEG_axi_gpio_emu_Reg
-  create_bd_addr_seg -range 0x10000 -offset 0x51020000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_jtag_emu/S_AXI/Reg] SEG_axi_jtag_emu_Reg
-  create_bd_addr_seg -range 0x10000 -offset 0x51000000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_pulp_control/S_AXI/Reg] SEG_axi_pulp_control_Reg
-  create_bd_addr_seg -range 0x10000 -offset 0x51010000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs clking_axi/Reg] SEG_clking_axi_Reg
+  create_bd_addr_seg -range 0x10000 -offset 0x51030000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_gpio_0/S_AXI/Reg] SEG_axi_gpio_0_Reg
   
 
   # Restore current instance

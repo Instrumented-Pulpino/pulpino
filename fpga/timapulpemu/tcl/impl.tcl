@@ -204,11 +204,11 @@ if {[string equal $::env(BOARD) "zybo"]} {
   # ----------------------------------------------------------------------------
   # User Push Buttons - Bank 34
   # ----------------------------------------------------------------------------
-  #set_property PACKAGE_PIN P16 [get_ports {btn_i[0]}];  # "BTNC"
-  #set_property PACKAGE_PIN R16 [get_ports {btn_i[1]}];  # "BTND"
-  #set_property PACKAGE_PIN N15 [get_ports {btn_i[2]}];  # "BTNL"
-  #set_property PACKAGE_PIN R18 [get_ports {btn_i[3]}];  # "BTNR"
-  #set_property PACKAGE_PIN T18 [get_ports {btn_i[4]}];  # "BTNU"
+  set_property PACKAGE_PIN P16 [get_ports {btn_i[0]}];  # "BTNC"
+  set_property PACKAGE_PIN R16 [get_ports {btn_i[1]}];  # "BTND"
+  set_property PACKAGE_PIN N15 [get_ports {btn_i[2]}];  # "BTNL"
+  set_property PACKAGE_PIN R18 [get_ports {btn_i[3]}];  # "BTNR"
+  set_property PACKAGE_PIN T18 [get_ports {btn_i[4]}];  # "BTNU"
 
   # ----------------------------------------------------------------------------
   # User DIP Switches - Bank 35

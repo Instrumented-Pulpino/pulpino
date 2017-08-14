@@ -34,17 +34,17 @@ if { [info exists ::env(XILINX_BOARD) ] } {
 source ../common/messages.tcl
 
 # create block design
-#source tcl/ps7_bd.tcl
+source tcl/ps7_bd.tcl
 
 # validate
-#validate_bd_design
+validate_bd_design
 
 # generate
-#generate_target all [get_files ./timapulpemu.srcs/sources_1/bd/ps7/ps7.bd]
-#make_wrapper -files [get_files ./timapulpemu.srcs/sources_1/bd/ps7/ps7.bd] -top
-#add_files -norecurse ./timapulpemu.srcs/sources_1/bd/ps7/hdl/ps7_wrapper.v
-#update_compile_order -fileset sources_1
-#update_compile_order -fileset sim_1
+generate_target all [get_files ./timapulpemu.srcs/sources_1/bd/ps7/ps7.bd]
+make_wrapper -files [get_files ./timapulpemu.srcs/sources_1/bd/ps7/ps7.bd] -top
+add_files -norecurse ./timapulpemu.srcs/sources_1/bd/ps7/hdl/ps7_wrapper.v
+update_compile_order -fileset sources_1
+update_compile_order -fileset sim_1
 
 # add timapulpemu_top
 add_files -norecurse ../rtl/clk_rst_gen.v
