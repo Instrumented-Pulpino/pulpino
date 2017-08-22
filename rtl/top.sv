@@ -116,7 +116,7 @@ module pulpino_top
     .AXI_ID_WIDTH   ( `AXI_ID_SLAVE_WIDTH ),
     .AXI_USER_WIDTH ( `AXI_USER_WIDTH     )
   )
-  slaves[2:0]();
+  slaves[1:0]();
 
   AXI_BUS
   #(
@@ -125,7 +125,7 @@ module pulpino_top
     .AXI_ID_WIDTH   ( `AXI_ID_MASTER_WIDTH ),
     .AXI_USER_WIDTH ( `AXI_USER_WIDTH      )
   )
-  masters[2:0]();
+  masters[3:0]();
 
   DEBUG_BUS
   debug();
@@ -182,10 +182,9 @@ module pulpino_top
     .clock_gating_i ( clk_gate_core_int ),
     .boot_addr_i    ( boot_addr_int     ),
 
-    .core_master    ( masters[0]        ),
-    .dbg_master     ( masters[1]        ),
-    .data_slave     ( slaves[1]         ),
-    .instr_slave    ( slaves[0]         ),
+    .instr_master   ( masters[0]        ),
+    .core_master    ( masters[1]        ),
+    .dbg_master     ( masters[3]        ),
     .debug          ( debug             ),
 
     .tck_i          ( tck_i             ),
@@ -227,7 +226,7 @@ module pulpino_top
     .spi_sdi2_i      ( spi_sdi2_i        ),
     .spi_sdi3_i      ( spi_sdi3_i        ),
 
-    .slave           ( slaves[2]         ),
+    .slave           ( slaves[0]         ),
 
     .uart_tx         ( uart_tx           ),
     .uart_rx         ( uart_rx           ),
@@ -290,8 +289,8 @@ module pulpino_top
 
   axi_node_intf_wrap
   #(
-    .NB_MASTER      ( 3                    ),
-    .NB_SLAVE       ( 3                    ),
+    .NB_MASTER      ( 2                    ),
+    .NB_SLAVE       ( 4                    ),
     .AXI_ADDR_WIDTH ( `AXI_ADDR_WIDTH      ),
     .AXI_DATA_WIDTH ( `AXI_DATA_WIDTH      ),
     .AXI_ID_WIDTH   ( `AXI_ID_MASTER_WIDTH ),
@@ -311,4 +310,3 @@ module pulpino_top
   );
 
 endmodule
-
