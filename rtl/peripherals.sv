@@ -20,7 +20,7 @@ module peripherals
     parameter AXI_USER_WIDTH       = 6,
     parameter AXI_SLAVE_ID_WIDTH   = 6,
     parameter AXI_MASTER_ID_WIDTH  = 6,
-    parameter ROM_START_ADDR       = 32'h8000
+    parameter ROM_START_ADDR       = 32'h18000000
   )
   (
     // Clock and Reset

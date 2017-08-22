@@ -305,8 +305,8 @@ module pulpino_top
     .master    ( slaves     ),
     .slave     ( masters    ),
 
-    .start_addr_i ( { 32'h1A10_0000, 32'h0010_0000, 32'h0000_0000 } ),
-    .end_addr_i   ( { 32'h1A11_FFFF, 32'h001F_FFFF, 32'h000F_FFFF } )
+    .start_addr_i ( { 32'h1000_0000, 32'h1A10_0000 } ),
+    .end_addr_i   ( { 32'h1FFF_FFFF, 32'h1A11_FFFF } )
   );
 
 endmodule

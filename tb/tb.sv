@@ -217,7 +217,9 @@ module tb;
       adv_dbg_if.jtag_reset();
       adv_dbg_if.jtag_softreset();
       adv_dbg_if.init();
-      adv_dbg_if.axi4_write32(32'h1A10_7008, 1, 32'h0000_0000);
+/* -----\/----- EXCLUDED -----\/-----
+      adv_dbg_if.axi4_write32(32'h1A10_7008, 1, 32'h1800_0000);
+ -----/\----- EXCLUDED -----/\----- */
     end
 
     if (memload == "PRELOAD")

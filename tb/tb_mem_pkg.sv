@@ -16,6 +16,7 @@
     begin
       $display("Preloading memory");
 
+/* -----\/----- EXCLUDED -----\/-----
       instr_size   = tb.top_i.core_region_i.instr_mem.sp_ram_wrap_i.RAM_SIZE;
       instr_width = tb.top_i.core_region_i.instr_mem.sp_ram_wrap_i.DATA_WIDTH;
 
@@ -24,6 +25,7 @@
 
       instr_mem = new [instr_size/4];
       data_mem  = new [data_size/4];
+ -----/\----- EXCLUDED -----/\----- */
 
       if(!$value$plusargs("l2_imem=%s", l2_imem_file))
          l2_imem_file = "slm_files/l2_stim.slm";
@@ -39,6 +41,7 @@
 
 
       // preload data memory
+/* -----\/----- EXCLUDED -----\/-----
       for(addr = 0; addr < data_size/4; addr = addr) begin
 
         for(bidx = 0; bidx < data_width/8; bidx++) begin
@@ -77,5 +80,6 @@
           if (bidx%4 == 3) addr++;
         end
       end
+ -----/\----- EXCLUDED -----/\----- */
     end
   endtask
