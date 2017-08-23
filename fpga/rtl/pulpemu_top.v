@@ -133,33 +133,77 @@ module pulpemu_top(
   wire        sda_out;
 
   wire        monitor_valid; //output
-   
+
   reg   [7:0] LD_q;
 
   wire        clking_axi_aclk;    // input
   wire        clking_axi_aresetn; // input
   wire [10:0] clking_axi_awaddr;  // input
-  wire  [2:0] clking_axi_awprot;  // input
+  wire [2:0]  clking_axi_awprot;  // input
   wire        clking_axi_awvalid; // input
   wire        clking_axi_awready; // output
   wire [31:0] clking_axi_wdata;   // input
-  wire  [3:0] clking_axi_wstrb;   // input
+  wire [3:0]  clking_axi_wstrb;   // input
   wire        clking_axi_wvalid;  // input
   wire        clking_axi_wready;  // output
-  wire  [1:0] clking_axi_bresp;   // output
+  wire [1:0]  clking_axi_bresp;   // output
   wire        clking_axi_bvalid;  // output
   wire        clking_axi_bready;  // input
   wire [10:0] clking_axi_araddr;  // input
-  wire  [2:0] clking_axi_arprot;  // input
+  wire [2:0]  clking_axi_arprot;  // input
   wire        clking_axi_arvalid; // input
   wire        clking_axi_arready; // output
   wire [31:0] clking_axi_rdata;   // output
-  wire  [1:0] clking_axi_rresp;   // output
+  wire [1:0]  clking_axi_rresp;   // output
   wire        clking_axi_rvalid;  // output
   wire        clking_axi_rready;  // input
 
   wire        uart_tx;            // output
-  wire        uart_rx;            // input
+  wire        uart_rx;            // wire
+
+  wire [31:0] AXI_DDR_awaddr;
+  wire [2:0]  AXI_DDR_awprot;
+  wire [3:0]  AXI_DDR_awregion;
+  wire [7:0]  AXI_DDR_awlen;
+  wire [2:0]  AXI_DDR_awsize;
+  wire [1:0]  AXI_DDR_awburst;
+  wire        AXI_DDR_awlock;
+  wire [3:0]  AXI_DDR_awcache;
+  wire [3:0]  AXI_DDR_awqos;
+  wire [3:0]  AXI_DDR_awid;
+  wire        AXI_DDR_awready;
+  wire        AXI_DDR_awvalid;
+
+  wire [31:0] AXI_DDR_araddr;
+  wire [2:0]  AXI_DDR_arprot;
+  wire [3:0]  AXI_DDR_arregion;
+  wire [7:0]  AXI_DDR_arlen;
+  wire [2:0]  AXI_DDR_arsize;
+  wire [1:0]  AXI_DDR_arburst;
+  wire        AXI_DDR_arlock;
+  wire [3:0]  AXI_DDR_arcache;
+  wire [3:0]  AXI_DDR_arqos;
+  wire [3:0]  AXI_DDR_arid;
+  wire        AXI_DDR_arready;
+  wire        AXI_DDR_arvalid;
+
+  wire        AXI_DDR_wvalid;
+  wire [31:0] AXI_DDR_wdata;
+  wire [3:0]  AXI_DDR_wstrb;
+  wire        AXI_DDR_wlast;
+  wire        AXI_DDR_wready;
+
+  wire [31:0] AXI_DDR_rdata;
+  wire [1:0]  AXI_DDR_rresp;
+  wire        AXI_DDR_rlast;
+  wire [3:0]  AXI_DDR_rid;
+  wire        AXI_DDR_rready;
+  wire        AXI_DDR_rvalid;
+
+  wire [1:0]  AXI_DDR_bresp;
+  wire [3:0]  AXI_DDR_bid;
+  wire        AXI_DDR_bready;
+  wire        AXI_DDR_bvalid;
 
   // clock generator signals
   wire s_rstn_pulpino;
@@ -250,7 +294,49 @@ module pulpemu_top(
     .DDR_ras_n          ( DDR_ras_n          ),
     .DDR_reset_n        ( DDR_reset_n        ),
     .DDR_we_n           ( DDR_we_n           ),
-                             
+
+  .AXI_DDR_awaddr ( AXI_DDR_awaddr ),
+  .AXI_DDR_awprot ( AXI_DDR_awprot ),
+  .AXI_DDR_awlen ( AXI_DDR_awlen ),
+  .AXI_DDR_awsize ( AXI_DDR_awsize ),
+  .AXI_DDR_awburst ( AXI_DDR_awburst ),
+  .AXI_DDR_awlock ( AXI_DDR_awlock ),
+  .AXI_DDR_awcache ( AXI_DDR_awcache ),
+  .AXI_DDR_awqos ( AXI_DDR_awqos ),
+  .AXI_DDR_awid ( AXI_DDR_awid ),
+  .AXI_DDR_awready ( AXI_DDR_awready ),
+  .AXI_DDR_awvalid ( AXI_DDR_awvalid ),
+
+  .AXI_DDR_araddr ( AXI_DDR_araddr ),
+  .AXI_DDR_arprot ( AXI_DDR_arprot ),
+  .AXI_DDR_arlen ( AXI_DDR_arlen ),
+  .AXI_DDR_arsize ( AXI_DDR_arsize ),
+  .AXI_DDR_arburst ( AXI_DDR_arburst ),
+  .AXI_DDR_arlock ( AXI_DDR_arlock ),
+  .AXI_DDR_arcache ( AXI_DDR_arcache ),
+  .AXI_DDR_arqos ( AXI_DDR_arqos ),
+  .AXI_DDR_arid ( AXI_DDR_arid ),
+  .AXI_DDR_arready ( AXI_DDR_arready ),
+  .AXI_DDR_arvalid ( AXI_DDR_arvalid ),
+
+  .AXI_DDR_wvalid ( AXI_DDR_wvalid ),
+  .AXI_DDR_wdata ( AXI_DDR_wdata ),
+  .AXI_DDR_wstrb ( AXI_DDR_wstrb ),
+  .AXI_DDR_wlast ( AXI_DDR_wlast ),
+  .AXI_DDR_wready ( AXI_DDR_wready ),
+
+  .AXI_DDR_rdata ( AXI_DDR_rdata ),
+  .AXI_DDR_rresp ( AXI_DDR_rresp ),
+  .AXI_DDR_rlast ( AXI_DDR_rlast ),
+  .AXI_DDR_rid ( AXI_DDR_rid ),
+  .AXI_DDR_rready ( AXI_DDR_rready ),
+  .AXI_DDR_rvalid ( AXI_DDR_rvalid ),
+
+  .AXI_DDR_bresp ( AXI_DDR_bresp ),
+  .AXI_DDR_bid ( AXI_DDR_bid ),
+  .AXI_DDR_bready ( AXI_DDR_bready ),
+  .AXI_DDR_bvalid ( AXI_DDR_bvalid ),
+
     .FIXED_IO_ddr_vrn   ( FIXED_IO_ddr_vrn   ),
     .FIXED_IO_ddr_vrp   ( FIXED_IO_ddr_vrp   ),
     .FIXED_IO_mio       ( FIXED_IO_mio       ),
@@ -281,10 +367,10 @@ module pulpemu_top(
     .fetch_enable       ( fetch_enable       ),
     .ps7_clk            ( ps7_clk            ),
     .ps7_rst_n          ( ps7_rst_n          ),
-    
+
     .UART_0_rxd         ( uart_tx            ),
     .UART_0_txd         ( uart_rx            ),
-                             
+
     .gpio_io_i          ( gpio_out           ),
     .gpio_io_o          ( gpio_in_ps7        ),
     .jtag_emu_i         ( jtag_emu_i         ),
@@ -376,7 +462,56 @@ module pulpemu_top(
     .sda_oen_o         ( sda_oen        ),
 
     .monitor_valid     ( monitor_valid  ),
-     
+
+  .AXI_DDR_awaddr ( AXI_DDR_awaddr ),
+  .AXI_DDR_awprot ( AXI_DDR_awprot ),
+  .AXI_DDR_awregion ( 'h0 ),
+  .AXI_DDR_awlen ( AXI_DDR_awlen ),
+  .AXI_DDR_awsize ( AXI_DDR_awsize ),
+  .AXI_DDR_awburst ( AXI_DDR_awburst ),
+  .AXI_DDR_awlock ( AXI_DDR_awlock ),
+  .AXI_DDR_awcache ( AXI_DDR_awcache ),
+  .AXI_DDR_awqos ( AXI_DDR_awqos ),
+  .AXI_DDR_awid ( AXI_DDR_awid ),
+  .AXI_DDR_awuser ( 'h0 ),
+  .AXI_DDR_awready ( AXI_DDR_awready ),
+  .AXI_DDR_awvalid ( AXI_DDR_awvalid ),
+
+  .AXI_DDR_araddr ( AXI_DDR_araddr ),
+  .AXI_DDR_arprot ( AXI_DDR_arprot ),
+  .AXI_DDR_arregion ( 'h0 ),
+  .AXI_DDR_arlen ( AXI_DDR_arlen ),
+  .AXI_DDR_arsize ( AXI_DDR_arsize ),
+  .AXI_DDR_arburst ( AXI_DDR_arburst ),
+  .AXI_DDR_arlock ( AXI_DDR_arlock ),
+  .AXI_DDR_arcache ( AXI_DDR_arcache ),
+  .AXI_DDR_arqos ( AXI_DDR_arqos ),
+  .AXI_DDR_arid ( AXI_DDR_arid ),
+  .AXI_DDR_aruser ( 'h0 ),
+  .AXI_DDR_arready ( AXI_DDR_arready ),
+  .AXI_DDR_arvalid ( AXI_DDR_arvalid ),
+
+  .AXI_DDR_wvalid ( AXI_DDR_wvalid ),
+  .AXI_DDR_wdata ( AXI_DDR_wdata ),
+  .AXI_DDR_wstrb ( AXI_DDR_wstrb ),
+  .AXI_DDR_wuser ( 'h0 ),
+  .AXI_DDR_wlast ( AXI_DDR_wlast ),
+  .AXI_DDR_wready ( AXI_DDR_wready ),
+
+  .AXI_DDR_rdata ( AXI_DDR_rdata ),
+  .AXI_DDR_rresp ( AXI_DDR_rresp ),
+  .AXI_DDR_rlast ( AXI_DDR_rlast ),
+  .AXI_DDR_rid ( AXI_DDR_rid ),
+  .AXI_DDR_ruser ( 'h0 ),
+  .AXI_DDR_rready ( AXI_DDR_rready ),
+  .AXI_DDR_rvalid ( AXI_DDR_rvalid ),
+
+  .AXI_DDR_bresp ( AXI_DDR_bresp ),
+  .AXI_DDR_bid ( AXI_DDR_bid ),
+  .AXI_DDR_buser ( 'h0 ),
+  .AXI_DDR_bready ( AXI_DDR_bready ),
+  .AXI_DDR_bvalid ( AXI_DDR_bvalid ),
+
     .gpio_in           ( gpio_in        ),
     .gpio_out          ( gpio_out       ),
     .gpio_dir          ( gpio_dir       ),
