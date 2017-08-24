@@ -126,7 +126,7 @@ sd_image/pulpemu_top.bit: ../pulpemu/pulpemu.runs/impl_1/pulpemu_top.bit
 # boot.bin
 ################################################################################
 
-sd_image/BOOT.BIN: sd_image/u-boot.elf sd_image/pulpemu_top.bit boot.bif sd_image/fsbl.elf
+sd_image/BOOT.BIN: sd_image/hello.elf sd_image/pulpemu_top.bit boot.bif sd_image/fsbl.elf sd_image/blink.elf
 	bootgen -image ./boot.bif -o i ./sd_image/BOOT.BIN -w on
 
 .PHONY: clean
