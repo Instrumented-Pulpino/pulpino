@@ -3,6 +3,6 @@ the_ROM_image:
   [bootloader]./sd_image/fsbl.elf
   ./sd_image/pulpemu_top.bit
   ./sd_image/u-boot.elf
-  ./sd_image/hello.elf
+  ./sd_image/boot.elf
   ./sd_image/blink.elf
 }

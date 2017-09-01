@@ -205,6 +205,9 @@ module pulpemu_top(
   wire        AXI_DDR_bready;
   wire        AXI_DDR_bvalid;
 
+  wire        AXI_DDR_clk;
+  wire        AXI_DDR_rstn;
+
   // clock generator signals
   wire s_rstn_pulpino;
   wire s_clk_pulpino;
@@ -337,6 +340,9 @@ module pulpemu_top(
   .AXI_DDR_bready ( AXI_DDR_bready ),
   .AXI_DDR_bvalid ( AXI_DDR_bvalid ),
 
+  .AXI_DDR_clk ( AXI_DDR_clk ),
+  .AXI_DDR_rstn ( AXI_DDR_rstn ),
+
     .FIXED_IO_ddr_vrn   ( FIXED_IO_ddr_vrn   ),
     .FIXED_IO_ddr_vrp   ( FIXED_IO_ddr_vrp   ),
     .FIXED_IO_mio       ( FIXED_IO_mio       ),
@@ -465,7 +471,6 @@ module pulpemu_top(
 
   .AXI_DDR_awaddr ( AXI_DDR_awaddr ),
   .AXI_DDR_awprot ( AXI_DDR_awprot ),
-  .AXI_DDR_awregion ( 'h0 ),
   .AXI_DDR_awlen ( AXI_DDR_awlen ),
   .AXI_DDR_awsize ( AXI_DDR_awsize ),
   .AXI_DDR_awburst ( AXI_DDR_awburst ),
@@ -473,13 +478,11 @@ module pulpemu_top(
   .AXI_DDR_awcache ( AXI_DDR_awcache ),
   .AXI_DDR_awqos ( AXI_DDR_awqos ),
   .AXI_DDR_awid ( AXI_DDR_awid ),
-  .AXI_DDR_awuser ( 'h0 ),
   .AXI_DDR_awready ( AXI_DDR_awready ),
   .AXI_DDR_awvalid ( AXI_DDR_awvalid ),
 
   .AXI_DDR_araddr ( AXI_DDR_araddr ),
   .AXI_DDR_arprot ( AXI_DDR_arprot ),
-  .AXI_DDR_arregion ( 'h0 ),
   .AXI_DDR_arlen ( AXI_DDR_arlen ),
   .AXI_DDR_arsize ( AXI_DDR_arsize ),
   .AXI_DDR_arburst ( AXI_DDR_arburst ),
@@ -487,14 +490,12 @@ module pulpemu_top(
   .AXI_DDR_arcache ( AXI_DDR_arcache ),
   .AXI_DDR_arqos ( AXI_DDR_arqos ),
   .AXI_DDR_arid ( AXI_DDR_arid ),
-  .AXI_DDR_aruser ( 'h0 ),
   .AXI_DDR_arready ( AXI_DDR_arready ),
   .AXI_DDR_arvalid ( AXI_DDR_arvalid ),
 
   .AXI_DDR_wvalid ( AXI_DDR_wvalid ),
   .AXI_DDR_wdata ( AXI_DDR_wdata ),
   .AXI_DDR_wstrb ( AXI_DDR_wstrb ),
-  .AXI_DDR_wuser ( 'h0 ),
   .AXI_DDR_wlast ( AXI_DDR_wlast ),
   .AXI_DDR_wready ( AXI_DDR_wready ),
 
@@ -511,6 +512,9 @@ module pulpemu_top(
   .AXI_DDR_buser ( 'h0 ),
   .AXI_DDR_bready ( AXI_DDR_bready ),
   .AXI_DDR_bvalid ( AXI_DDR_bvalid ),
+
+  .AXI_DDR_clk ( AXI_DDR_clk ),
+  .AXI_DDR_rstn ( AXI_DDR_rstn ),
 
     .gpio_in           ( gpio_in        ),
     .gpio_out          ( gpio_out       ),

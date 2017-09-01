@@ -110,6 +110,9 @@ module pulpino(
   AXI_DDR_bready,
   AXI_DDR_bvalid,
 
+  AXI_DDR_clk,
+  AXI_DDR_rstn,
+
   tck_i,
   trstn_i,
   tms_i,
@@ -218,6 +221,9 @@ module pulpino(
   input [0:0]   AXI_DDR_buser;
   output        AXI_DDR_bready;
   input         AXI_DDR_bvalid;
+
+  output        AXI_DDR_clk;
+  output        AXI_DDR_rstn;
 
   // JTAG signals
   input  tck_i;
@@ -335,6 +341,9 @@ module pulpino(
   .AXI_DDR_buser ( AXI_DDR_buser ),
   .AXI_DDR_bready ( AXI_DDR_bready ),
   .AXI_DDR_bvalid ( AXI_DDR_bvalid ),
+
+   .AXI_DDR_clk ( AXI_DDR_clk ),
+   .AXI_DDR_rstn ( AXI_DDR_rstn ),
 
     .tck_i             ( tck_i             ),
     .trstn_i           ( trstn_i           ),

@@ -121,6 +121,9 @@ module pulpino_top
     output logic              AXI_DDR_bready,
     input logic               AXI_DDR_bvalid,
 
+    output logic              AXI_DDR_clk,
+    output logic              AXI_DDR_rstn,
+
     input logic [31:0]        gpio_in,
     output logic [31:0]       gpio_out,
     output logic [31:0]       gpio_dir,
@@ -286,7 +289,9 @@ module pulpino_top
   assign slaves[1].b_id = AXI_DDR_bid;
   assign slaves[1].b_user = AXI_DDR_buser;
   assign AXI_DDR_bready = slaves[1].b_ready;
-  assign slaves[1].b_valid = AXI_DDR_bvalid;
+  assign slaves[1].b_valid  = AXI_DDR_bvalid;
+  assign AXI_DDR_clk = clk_int;
+  assign AXI_DDR_rstn = rstn_int;
 
   //----------------------------------------------------------------------------//
   // Peripherals
